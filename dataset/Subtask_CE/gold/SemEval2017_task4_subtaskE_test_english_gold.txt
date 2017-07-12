@@ -1,0 +1,125 @@
+#ArianaGrande	0	0.037037037037037	0.481481481481481	0.481481481481481	0
+#BlackLivesMatter	0	0.266666666666667	0.573333333333333	0.16	0
+#FCBlive	0	0.02	0.75	0.23	0
+#GilmoreGirlsTop4	0	0.02	0.55	0.42	0.01
+#Hamas	0.03	0.52	0.45	0	0
+#Hatchimals	0.01	0.1	0.49	0.4	0
+#Hezbollah	0	0.25	0.72	0.03	0
+#ISIS	0	0.41	0.59	0	0
+#Jerusalem	0	0.07	0.78	0.15	0
+#Libya	0	0.18	0.78	0.04	0
+#MannequinChallenge	0	0.05	0.52	0.43	0
+#MosulOffensive	0	0.13	0.83	0.04	0
+#NBAwards	0	0.0102040816326531	0.663265306122449	0.326530612244898	0
+#OneDirection	0	0.01	0.46	0.47	0.06
+#Palestine	0	0.18	0.75	0.07	0
+#ScreamQueens	0	0.08	0.46	0.43	0.03
+#TheWalkingDead	0	0.05	0.51	0.42	0.02
+#ThisIsUs	0	0.07	0.27	0.61	0.05
+#UniteBlue	0	0.06	0.85	0.09	0
+#UnitedNations	0.01	0.1	0.73	0.15	0.01
+#Yemen	0	0.22	0.71	0.07	0
+#beautyandthebeast	0.01	0.05	0.33	0.57	0.04
+#draintheswamp	0	0.26	0.65	0.09	0
+#fantasticbeasts	0	0	0.19	0.62	0.19
+#nationalfastfoodday	0	0.07	0.38	0.54	0.01
+#stillwithher	0.01	0.06	0.36	0.53	0.04
+#thankyouobama	0.02	0.05	0.17	0.7	0.06
+#trumptransitionteam	0	0.36	0.48	0.15	0.01
+#uber	0	0.17	0.55	0.28	0
+3d printing	0	0.02	0.5	0.46	0.02
+@elizabethforma	0.05	0.23	0.61	0.1	0.01
+@megynkelly	0.02	0.35	0.37	0.22	0.04
+@utahjazz	0	0.04	0.45	0.48	0.03
+Ben Carson	0.03	0.29	0.55	0.12	0.01
+Dakota Access Pipeline	0.0121951219512195	0.219512195121951	0.707317073170732	0.0609756097560976	0
+David Blaine	0.04	0.16	0.32	0.44	0.04
+Google Earth VR	0.01	0.04	0.41	0.5	0.04
+Mike Pence	0.04	0.32	0.43	0.21	0
+Putin	0.04	0.35	0.53	0.08	0
+Ricky Martin	0.01	0.03	0.45	0.44	0.07
+Steve Bannon	0.0309278350515464	0.360824742268041	0.494845360824742	0.103092783505155	0.0103092783505155
+Tony Romo	0.02	0.17	0.58	0.21	0.02
+Valentines	0	0.02	0.53	0.45	0
+abortion	0	0.39	0.6	0.01	0
+aleppo	0	0.16	0.84	0	0
+alt-rightists	0.02	0.73	0.24	0.01	0
+animal testing	0.01	0.72	0.27	0	0
+anti-trump riots	0.02	0.67	0.31	0	0
+ashley graham	0	0.04	0.65	0.29	0.02
+bad hombres	0.04	0.59	0.25	0.11	0.01
+bob dylan	0.01	0.03	0.47	0.46	0.03
+brexit	0	0.18	0.79	0.03	0
+clinton foundation	0.02	0.64	0.32	0.02	0
+comey	0.03	0.55	0.4	0.02	0
+conservatives	0.06	0.57	0.32	0.05	0
+cristiano ronaldo	0.01	0.1	0.67	0.21	0.01
+cuba embargo	0	0.5	0.47	0.03	0
+cubs	0	0.06	0.6	0.31	0.03
+cy young	0	0.05	0.62	0.33	0
+death penalty	0.01	0.57	0.4	0.02	0
+deep learning	0	0.03	0.65	0.31	0.01
+dems	0.03	0.6	0.31	0.06	0
+deplorables	0.03	0.66	0.23	0.07	0.01
+drone strikes	0.01	0.74	0.25	0	0
+electoral college	0	0.32	0.62	0.06	0
+euthanasia	0	0.46	0.49	0.05	0
+fidel castro	0.01	0.19	0.61	0.19	0
+fossil fuels	0.01	0.64	0.35	0	0
+fracking	0.02	0.47	0.46	0.04	0.01
+galaxy note 7	0	0.31	0.51	0.18	0
+gay marriage	0.01	0.36	0.47	0.16	0
+george soros	0.06	0.56	0.32	0.06	0
+gold standard	0	0.06	0.74	0.19	0.01
+grayson allen	0.02	0.16	0.47	0.3	0.05
+gun control	0.01	0.41	0.52	0.06	0
+homeopathy	0.01	0.2	0.6	0.19	0
+immigration	0	0.41	0.58	0.01	0
+kim fatty the third	0.01	0.68	0.3	0.01	0
+kim jong-un	0.03	0.44	0.44	0.09	0
+kremlintrolls	0.04	0.47	0.46	0.03	0
+leftists	0.08	0.78	0.13	0.01	0
+leonard cohen	0	0.04	0.39	0.54	0.03
+liberals	0.08	0.81	0.09	0.02	0
+maduro	0.09	0.52	0.34	0.05	0
+marine le pen	0	0.24	0.62	0.14	0
+medicaid	0	0.29	0.59	0.12	0
+medical marijuana	0	0.07	0.63	0.3	0
+medicare	0	0.35	0.46	0.18	0.01
+melania speech	0.02	0.59	0.31	0.08	0
+melania trump	0	0.45	0.46	0.09	0
+michael moore	0.02	0.39	0.46	0.12	0.01
+microsoft joins the linux foundation	0	0.03	0.64	0.32	0.01
+minimum wage	0	0.3	0.63	0.07	0
+muhammad ali	0	0.05	0.61	0.34	0
+nazi	0.13	0.76	0.11	0	0
+obama admin	0.03	0.49	0.45	0.03	0
+obamacare	0.03	0.42	0.4	0.15	0
+pelosi	0.06	0.34	0.53	0.07	0
+persona 5	0	0.03	0.62	0.33	0.02
+pope francis	0.02	0.31	0.52	0.15	0
+popular vote	0	0.21	0.67	0.12	0
+poroshenko	0.03	0.34	0.57	0.06	0
+rightists	0.04	0.67	0.23	0.05	0.01
+robots	0	0.09	0.6	0.29	0.02
+saakashvili	0.01	0.36	0.55	0.08	0
+self-driving cars	0	0.09	0.64	0.27	0
+social security	0	0.23	0.64	0.12	0.01
+steve bannon	0.02	0.43	0.47	0.07	0.01
+supremacists	0.07	0.77	0.16	0	0
+tesla model s	0	0.15	0.5	0.33	0.02
+thanksgiving	0	0.04	0.35	0.55	0.06
+tim duncan	0	0.05	0.56	0.37	0.02
+tipp	0.02	0.11	0.64	0.22	0.01
+tpp	0.01	0.35	0.6	0.04	0
+trump cabinet	0.03	0.42	0.49	0.06	0
+trump protest	0.02	0.49	0.45	0.04	0
+trump transition	0	0.36	0.51	0.13	0
+vaccines	0.02	0.35	0.58	0.05	0
+vegetarianism	0.01	0.17	0.51	0.31	0
+verlander	0	0.07	0.78	0.15	0
+voter registration	0	0.23	0.74	0.03	0
+voter suppression	0	0.57	0.41	0.02	0
+wall on the mexican border	0.01	0.47	0.47	0.05	0
+westworld	0	0.09	0.41	0.46	0.04
+zac efron	0	0.05	0.51	0.42	0.02

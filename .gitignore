@@ -1,0 +1,14 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea/
+/embeddings/*.txt
+/embeddings/*.pickle
+/models/neural/**/*.png
+/models/*.png
+/dataset/Extras/
+/submissions/
+/dataset/Subtask_A/silver_no_seeds.txt
+/dataset/Subtask_A/silver.txt
+/dataset/Subtask_A/silver_seeds_omitted.txt
+/dataset/twitter_download/
+/dataset/README.txt
+/dataset/semeval_data_loader.py
