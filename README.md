@@ -29,7 +29,7 @@ Citation:
 ## Prerequisites
 #### 1 - Install Requirements
 ```
-pip install -r /datastories-semeval2017-task6/requirements.txt
+pip install -r /datastories-semeval2017-task4/requirements.txt
 ```
 
 #### 2 - Download pre-trained Word Embeddings
