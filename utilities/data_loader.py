@@ -9,7 +9,7 @@ from ekphrasis.dicts.emoticons import emoticons
 from kutilities.helpers.data_preparation import print_dataset_statistics, labels_to_categories, categories_to_onehot
 from sklearn.cross_validation import train_test_split
 
-from dataset.semeval_data_loader import SemEvalDataLoader
+from dataset.data_loader import SemEvalDataLoader
 from sk_transformers.CustomPreProcessor import CustomPreProcessor
 from sk_transformers.EmbeddingsExtractor import EmbeddingsExtractor
 from utilities.ignore_warnings import set_ignores

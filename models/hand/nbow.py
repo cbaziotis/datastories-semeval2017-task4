@@ -5,7 +5,7 @@ from ekphrasis.classes.tokenizer import SocialTokenizer
 from ekphrasis.dicts.emoticons import emoticons
 from sklearn.metrics import f1_score
 
-from dataset.semeval_data_loader import SemEvalDataLoader
+from dataset.data_loader import SemEvalDataLoader
 from sk_transformers.CustomPreProcessor import CustomPreProcessor
 from sk_transformers.DBOWFeatureExtractor import DBOWFeatureExtractor
 from utilities.data_loader import get_embeddings

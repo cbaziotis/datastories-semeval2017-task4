@@ -1,6 +1,7 @@
 import os
 import pickle
 
+import errno
 import numpy
 
 from utilities.ResourceManager import ResourceManager
@@ -19,7 +20,7 @@ class WordVectorsManager(ResourceManager):
 
     def is_ascii(self, text):
         try:
-            mynewstring = text.encode('ascii')
+            text.encode('ascii')
             return True
         except:
             return False
@@ -53,7 +54,8 @@ class WordVectorsManager(ResourceManager):
 
         else:
             print("{} not found!".format(self.wv_file_path))
-            raise FileNotFoundError
+            raise FileNotFoundError(
+                errno.ENOENT, os.strerror(errno.ENOENT), self.wv_file_path)
 
     def read(self):
         if os.path.exists(os.path.join(os.path.dirname(__file__), self.parsed_filename)):

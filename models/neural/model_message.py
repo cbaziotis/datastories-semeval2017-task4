@@ -2,14 +2,17 @@ import pickle
 
 import numpy
 from keras.callbacks import ModelCheckpoint
+from keras.layers import LSTM
 from keras.utils.visualize_util import plot
-from kutilities.callbacks import MetricsCallback, WeightsCallback, PlottingCallback
-from kutilities.helpers.data_preparation import get_labels_to_categories_map, get_class_weights2, onehot_to_categories
+from kutilities.callbacks import MetricsCallback, WeightsCallback, \
+    PlottingCallback
+from kutilities.helpers.data_preparation import get_labels_to_categories_map, \
+    get_class_weights2, onehot_to_categories
 from sklearn.metrics import f1_score, precision_score
 from sklearn.metrics import recall_score
 
-from dataset.semeval_data_loader import SemEvalDataLoader
-from models.neural import keras_models as nn_models
+from dataset.data_loader import SemEvalDataLoader
+from models.neural.keras_models import build_attention_RNN
 from utilities.data_loader import get_embeddings, Task4Loader, prepare_dataset
 from utilities.ignore_warnings import set_ignores
 
@@ -76,19 +79,24 @@ if SEMEVAL_GOLD:
 # NN MODEL
 ############################################################################
 print("Building NN Model...")
-# nn_model = build_attention_RNN(embeddings, classes=3,
-#                                max_length=max_length, layers=2, unit=LSTM,
-#                                cells=150, bidirectional=True, attention="simple",
-#                                noise=0.2, clipnorm=1, lr=0.001, loss_l2=0.0001,
-#                                final_layer=True, dropout_final=0.5, dropout_attention=0.5,
-#                                dropout_words=0.4, dropout_rnn=0.3, dropout_rnn_U=0.3)
+nn_model = build_attention_RNN(embeddings, classes=3,
+                               max_length=max_length, layers=2, unit=LSTM,
+                               cells=150, bidirectional=True,
+                               attention="simple",
+                               noise=0.3, clipnorm=1, lr=0.001, loss_l2=0.0001,
+                               final_layer=False, dropout_final=0.5,
+                               dropout_attention=0.5,
+                               dropout_words=0.3, dropout_rnn=0.3,
+                               dropout_rnn_U=0.3)
 
 # nn_model = build_attention_RNN(embeddings, classes=3, max_length=max_length, unit=LSTM,
 #                                cells=32, attention="simple", noise=0.1, loss_l2=0.0001,
 #                                dropout_attention=0.1, dropout_rnn=0.1, dropout_rnn_U=0)
 
-nn_model = nn_models.cnn(embeddings, max_length)
-plot(nn_model, show_layer_names=True, show_shapes=True, to_file="model_task4_sub{}.png".format(TASK))
+# nn_model = nn_models.cnn(embeddings, max_length)
+
+plot(nn_model, show_layer_names=True, show_shapes=True,
+     to_file="model_task4_sub{}.png".format(TASK))
 print(nn_model.summary())
 
 ############################################################################
@@ -98,14 +106,17 @@ metrics = {
     "f1_pn": (lambda y_test, y_pred: f1_score(y_test, y_pred, average='macro',
                                               labels=[class_to_cat_mapping['positive'],
                                                       class_to_cat_mapping['negative']])),
-    "M_recall": (lambda y_test, y_pred: recall_score(y_test, y_pred, average='macro')),
-    "M_precision": (lambda y_test, y_pred: precision_score(y_test, y_pred, average='macro'))
+    "M_recall": (
+        lambda y_test, y_pred: recall_score(y_test, y_pred, average='macro')),
+    "M_precision": (
+        lambda y_test, y_pred: precision_score(y_test, y_pred,
+                                               average='macro'))
 }
 
 classes = ['positive', 'negative', 'neutral']
 class_to_cat_mapping = get_labels_to_categories_map(classes)
-cat_to_class_mapping = {v: k for k, v in get_labels_to_categories_map(classes).items()}
-
+cat_to_class_mapping = {v: k for k, v in
+                        get_labels_to_categories_map(classes).items()}
 
 _datasets = {}
 _datasets["1-train"] = training,
@@ -113,12 +124,11 @@ _datasets["2-val"] = validation if not FINAL else testing
 if not FINAL:
     _datasets["3-test"] = testing
 
-metrics_callback = MetricsCallback(
-    datasets=_datasets,
-    metrics=metrics)
+metrics_callback = MetricsCallback(datasets=_datasets, metrics=metrics)
 weights = WeightsCallback(parameters=["W"], stats=["raster", "mean", "std"])
 # plotting = PlottingCallback(grid_ranges=(0.5, 0.75), height=5, benchmarks={"SE17": 0.67, "goal": 0.71})
-plotting = PlottingCallback(grid_ranges=(0.5, 0.75), height=5, benchmarks={"SE17": 0.681})
+plotting = PlottingCallback(grid_ranges=(0.5, 0.75), height=5,
+                            benchmarks={"SE17": 0.681})
 
 _callbacks = []
 _callbacks.append(metrics_callback)
@@ -127,17 +137,22 @@ _callbacks.append(weights)
 
 if PERSIST:
     checkpointer = ModelCheckpoint(filepath=best_model(),
-                                   monitor='val.macro_recall', mode="max", verbose=1, save_best_only=True)
+                                   monitor='val.macro_recall', mode="max",
+                                   verbose=1, save_best_only=True)
     _callbacks.append(checkpointer)
 
 ############################################################################
 # APPLY CLASS WEIGHTS
 ############################################################################
-class_weights = get_class_weights2(onehot_to_categories(training[1]), smooth_factor=0)
-print("Class weights:", {cat_to_class_mapping[c]: w for c, w in class_weights.items()})
+class_weights = get_class_weights2(onehot_to_categories(training[1]),
+                                   smooth_factor=0)
+print("Class weights:",
+      {cat_to_class_mapping[c]: w for c, w in class_weights.items()})
 
-history = nn_model.fit(training[0], training[1], validation_data=validation if not FINAL else testing,
+history = nn_model.fit(training[0], training[1],
+                       validation_data=validation if not FINAL else testing,
                        nb_epoch=50, batch_size=128,
                        class_weight=class_weights, callbacks=_callbacks)
 
-pickle.dump(history.history, open("hist_task4_sub{}.pickle".format(TASK), "wb"))
+pickle.dump(history.history,
+            open("hist_task4_sub{}.pickle".format(TASK), "wb"))

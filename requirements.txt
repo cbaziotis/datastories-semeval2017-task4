@@ -1,9 +1,9 @@
-ekphrasis==0.1.5
 frozendict==1.2
-Keras==1.2.0
-keras_utilities==0.1.23
-matplotlib==1.5.3
-matplotlib2tikz==0.6.2
-numpy==1.12.0
-tqdm==4.10.0
+keras_utilities==0.1.28
+Keras==1.2.2
+ekphrasis==0.1.7
+numpy==1.13.1
+tqdm==4.15.0
+nltk==3.2.4
 scikit_learn==0.18.1
+pydot-ng==1.0.0

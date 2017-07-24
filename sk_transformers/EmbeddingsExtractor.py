@@ -3,11 +3,15 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 
 class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
-    def __init__(self, word_indices, max_lengths=None, add_tokens=None, unk_policy="random", **kwargs):
+    def __init__(self, word_indices,
+                 max_lengths=None,
+                 add_tokens=None,
+                 unk_policy="random", **kwargs):
         """
 
         :param word_indices:
-        :param max_lengths: list of integers indicating the max limit of words for each data list in X
+        :param max_lengths: list of integers indicating the max limit of words
+                            for each data list in X
         :param unk_policy: "random","zero","ignore"
         """
         self.word_indices = word_indices

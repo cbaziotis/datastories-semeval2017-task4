@@ -6,7 +6,6 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import mutual_info_classif
 
-
 # @profile
 from utilities.evaluation import most_discriminative_features
 
@@ -73,7 +72,9 @@ class DBOWFeatureExtractor(BaseEstimator, TransformerMixin):
 
         elif len(vectors) > 0:
             vec = np.array([item for sublist in vectors for item in sublist])
-            return np.hstack([vec, np.zeros(self.vec_dim * (self.window - len(vectors)))])
+            return np.hstack(
+                [vec, np.zeros(self.vec_dim * (self.window - len(vectors)))]
+            )
 
         else:
             if operation == "minmax":
@@ -94,16 +95,21 @@ class DBOWFeatureExtractor(BaseEstimator, TransformerMixin):
             # print(len(doc), len(doc_terms), len(doc) - len(doc_terms))
 
             if not self.stopwords:
-                doc_terms = [term for term in doc_terms if term[0] not in self.stops]
+                doc_terms = [term for term in doc_terms
+                             if term[0] not in self.stops]
 
             if self.idf_weight or self.fs_weight:
                 if self.idf_weight:
-                    doc_terms = [term for term in doc_terms if term[0] in self.tfidf_weights]
+                    doc_terms = [term for term in doc_terms
+                                 if term[0] in self.tfidf_weights]
                 else:
-                    doc_terms = [term[0] for term in doc_terms if term[0] in self.fscores]
+                    doc_terms = [term[0] for term in doc_terms
+                                 if term[0] in self.fscores]
 
             if self.negation:
-                negs = find_negations(doc, neg_comma=self.neg_comma, neg_modals=self.neg_modals)
+                negs = find_negations(doc,
+                                      neg_comma=self.neg_comma,
+                                      neg_modals=self.neg_modals)
 
             for i, term in enumerate(doc_terms):
                 # vector = term[1]
@@ -130,7 +136,9 @@ class DBOWFeatureExtractor(BaseEstimator, TransformerMixin):
 
                 if self.context_diff:
                     # add the difference between the two context vectors
-                    feat_stack = np.hstack([feat_stack, self.context_difference(aff_vec, neg_vec)])
+                    feat_stack = np.hstack(
+                        [feat_stack, self.context_difference(aff_vec, neg_vec)]
+                    )
 
             append(feat_stack)
 
@@ -159,20 +167,25 @@ class DBOWFeatureExtractor(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         # self.vec_dim = X[0][0][1].size
         X = self.fuse_text_vecs(X)
-        return self.extract_doc_vec(X)  # where the actual feature extraction happens
+        return self.extract_doc_vec(X)  # actual feature extraction
 
     def fit(self, X, y=None):
         X = list(X)
         if self.idf_weight or self.fs_weight:
-            count = CountVectorizer(lowercase=False, binary=False,
-                                    tokenizer=lambda words: [word for word in words])
+            count = CountVectorizer(
+                lowercase=False,
+                binary=False,
+                tokenizer=lambda words: [word for word in words])
             _X = count.fit_transform(X)
 
             if self.idf_weight:
-                tfidf_transformer = TfidfTransformer(sublinear_tf=True, smooth_idf=True, use_idf=True)
+                tfidf_transformer = TfidfTransformer(sublinear_tf=True,
+                                                     smooth_idf=True,
+                                                     use_idf=True)
                 tfidf_transformer.fit(_X)
                 self.tfidf_weights = {name: score for name, score
-                                      in zip(count.get_feature_names(), tfidf_transformer.idf_)}
+                                      in zip(count.get_feature_names(),
+                                             tfidf_transformer.idf_)}
 
             if self.fs_weight:
                 mi = SelectKBest(score_func=mutual_info_classif, k="all")

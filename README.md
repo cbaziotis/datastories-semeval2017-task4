@@ -32,6 +32,15 @@ Citation:
 pip install -r /datastories-semeval2017-task4/requirements.txt
 ```
 
+Ubuntu:
+```
+sudo apt-get install graphviz
+```
+
+Windows:
+Install graphiz from here:http://www.graphviz.org/Download_windows.php
+
+
 #### 2 - Download pre-trained Word Embeddings
 The models were trained on top of word embeddings pre-trained on a big collection of Twitter messages.
 We collected a big dataset of 330M English Twitter messages posted from 12/2012 to 07/2016. 
