@@ -1,7 +1,7 @@
+import errno
 import os
 import pickle
 
-import errno
 import numpy
 
 from utilities.ResourceManager import ResourceManager
@@ -11,12 +11,9 @@ class WordVectorsManager(ResourceManager):
     def __init__(self, corpus=None, dim=None, omit_non_english=False):
         super().__init__()
 
-        wv_directory = "..\\embeddings\\"
-
         self.omit_non_english = omit_non_english
         self.wv_filename = "{}.{}d.txt".format(corpus, str(dim))
         self.parsed_filename = "{}.{}d.pickle".format(corpus, str(dim))
-        self.wv_file_path = "{}\\{}".format(wv_directory, self.wv_filename)
 
     def is_ascii(self, text):
         try:
@@ -26,10 +23,12 @@ class WordVectorsManager(ResourceManager):
             return False
 
     def write(self):
-        if os.path.exists(self.wv_file_path):
+        _word_vector_file = os.path.join(os.path.dirname(__file__), self.wv_filename)
+
+        if os.path.exists(_word_vector_file):
             print('Indexing file {} ...'.format(self.wv_filename))
             embeddings_dict = {}
-            f = open(self.wv_file_path, "r", encoding="utf-8")
+            f = open(_word_vector_file, "r", encoding="utf-8")
             for i, line in enumerate(f):
                 values = line.split()
                 word = values[0]
@@ -53,13 +52,14 @@ class WordVectorsManager(ResourceManager):
                 pickle.dump(embeddings_dict, pickle_file)
 
         else:
-            print("{} not found!".format(self.wv_file_path))
+            print("{} not found!".format(_word_vector_file))
             raise FileNotFoundError(
-                errno.ENOENT, os.strerror(errno.ENOENT), self.wv_file_path)
+                errno.ENOENT, os.strerror(errno.ENOENT), _word_vector_file)
 
     def read(self):
-        if os.path.exists(os.path.join(os.path.dirname(__file__), self.parsed_filename)):
-            with open(os.path.join(os.path.dirname(__file__), self.parsed_filename), 'rb') as f:
+        _parsed_file = os.path.join(os.path.dirname(__file__), self.parsed_filename)
+        if os.path.exists(_parsed_file):
+            with open(_parsed_file, 'rb') as f:
                 return pickle.load(f)
         else:
             self.write()
