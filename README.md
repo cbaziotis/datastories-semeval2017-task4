@@ -62,7 +62,7 @@ Place the file(s) in `/embeddings` folder, for the program to find it.
 
 #### Word Embeddings
 In order to specify which word embeddings file you want to use, 
-you have to set the values of `WV_CORPUS` and `WV_WV_DIM` in `task6A.py` and `task6A_LOO.py` respectively.
+you have to set the values of `WV_CORPUS` and `WV_WV_DIM` in `model_message.py` and `model_target.py` respectively.
 The default values are:
 ```python
 WV_CORPUS = "datastories.twitter"
