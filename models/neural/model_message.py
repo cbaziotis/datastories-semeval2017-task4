@@ -2,7 +2,6 @@ import pickle
 
 import numpy
 from keras.callbacks import ModelCheckpoint
-from keras.layers import LSTM
 from keras.utils.visualize_util import plot
 from kutilities.callbacks import MetricsCallback, WeightsCallback, \
     PlottingCallback
@@ -12,7 +11,7 @@ from sklearn.metrics import f1_score, precision_score
 from sklearn.metrics import recall_score
 
 from dataset.data_loader import SemEvalDataLoader
-from models.neural.keras_models import build_attention_RNN
+from models.neural.keras_models import cnn_multi_filters
 from utilities.data_loader import get_embeddings, Task4Loader, prepare_dataset
 from utilities.ignore_warnings import set_ignores
 
@@ -46,7 +45,8 @@ TASK = "A"  # Specify the Subtask. It is needed to correctly load the data
 # you HAVE tp set PERSIST = True, in order to be able to use the trained model later
 PERSIST = False
 best_model = lambda: "cp_model_task4_sub{}.hdf5".format(TASK)
-best_model_word_indices = lambda: "cp_model_task4_sub{}_word_indices.pickle".format(TASK)
+best_model_word_indices = lambda: "cp_model_task4_sub{}_word_indices.pickle".format(
+    TASK)
 
 ############################################################################
 # LOAD DATA
@@ -79,21 +79,25 @@ if SEMEVAL_GOLD:
 # NN MODEL
 ############################################################################
 print("Building NN Model...")
-nn_model = build_attention_RNN(embeddings, classes=3,
-                               max_length=max_length, layers=2, unit=LSTM,
-                               cells=150, bidirectional=True,
-                               attention="simple",
-                               noise=0.3, clipnorm=1, lr=0.001, loss_l2=0.0001,
-                               final_layer=False, dropout_final=0.5,
-                               dropout_attention=0.5,
-                               dropout_words=0.3, dropout_rnn=0.3,
-                               dropout_rnn_U=0.3)
+# nn_model = build_attention_RNN(embeddings, classes=3,
+#                                max_length=max_length, layers=2, unit=LSTM,
+#                                cells=150, bidirectional=True,
+#                                attention="simple",
+#                                noise=0.3, clipnorm=1, lr=0.001, loss_l2=0.0001,
+#                                final_layer=False, dropout_final=0.5,
+#                                dropout_attention=0.5,
+#                                dropout_words=0.3, dropout_rnn=0.3,
+#                                dropout_rnn_U=0.3)
 
 # nn_model = build_attention_RNN(embeddings, classes=3, max_length=max_length, unit=LSTM,
 #                                cells=32, attention="simple", noise=0.1, loss_l2=0.0001,
 #                                dropout_attention=0.1, dropout_rnn=0.1, dropout_rnn_U=0)
 
-# nn_model = nn_models.cnn(embeddings, max_length)
+# nn_model = cnn_simple(embeddings, max_length)
+nn_model = cnn_multi_filters(embeddings, max_length, [3, 4, 5], 100,
+                             # noise=0.1,
+                             # drop_text_input=0.2,
+                             drop_conv=0.5, )
 
 plot(nn_model, show_layer_names=True, show_shapes=True,
      to_file="model_task4_sub{}.png".format(TASK))
@@ -103,9 +107,10 @@ print(nn_model.summary())
 # CALLBACKS
 ############################################################################
 metrics = {
-    "f1_pn": (lambda y_test, y_pred: f1_score(y_test, y_pred, average='macro',
-                                              labels=[class_to_cat_mapping['positive'],
-                                                      class_to_cat_mapping['negative']])),
+    "f1_pn": (lambda y_test, y_pred:
+              f1_score(y_test, y_pred, average='macro',
+                       labels=[class_to_cat_mapping['positive'],
+                               class_to_cat_mapping['negative']])),
     "M_recall": (
         lambda y_test, y_pred: recall_score(y_test, y_pred, average='macro')),
     "M_precision": (
@@ -151,7 +156,7 @@ print("Class weights:",
 
 history = nn_model.fit(training[0], training[1],
                        validation_data=validation if not FINAL else testing,
-                       nb_epoch=50, batch_size=128,
+                       nb_epoch=50, batch_size=50,
                        class_weight=class_weights, callbacks=_callbacks)
 
 pickle.dump(history.history,

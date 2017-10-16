@@ -18,6 +18,12 @@ Citation:
 }
 ```
 
+![MSA](task4A-1.png)
+*The message-level sentiment analysis model, for SubTask A.*
+
+![MSA](task4C-1.png)
+*The target-based sentiment analysis model, for SubTasks B,C,D,E.*
+
 **Notes**
 
 * If what you are just interested in the source code for the model then just see 

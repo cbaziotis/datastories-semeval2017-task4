@@ -4,10 +4,11 @@ from keras.engine import Model
 from keras.engine import merge
 from keras.layers import Dropout, Dense, Bidirectional, LSTM, \
     Embedding, GaussianNoise, Activation, Flatten, \
-    TimeDistributed, RepeatVector, Permute, MaxoutDense, Highway, BatchNormalization, Conv1D, GlobalMaxPooling1D, Convolution1D, GRU
+    TimeDistributed, RepeatVector, Permute, MaxoutDense, GlobalMaxPooling1D, \
+    Convolution1D, MaxPooling1D
 from keras.models import Sequential
 from keras.optimizers import Adam
-from keras.regularizers import l2, WeightRegularizer
+from keras.regularizers import l2
 from kutilities.layers import AttentionWithContext, Attention, MeanOverTime
 from sklearn import preprocessing
 
@@ -16,7 +17,8 @@ from utilities.ignore_warnings import set_ignores
 set_ignores()
 
 
-def embeddings_layer(max_length, embeddings, trainable=False, masking=False, scale=False, normalize=False):
+def embeddings_layer(max_length, embeddings, trainable=False, masking=False,
+                     scale=False, normalize=False):
     if scale:
         print("Scaling embedding weights...")
         embeddings = preprocessing.scale(embeddings)
@@ -57,8 +59,10 @@ def weighted_states(activations, rnn_size, input_length, attention="single"):
         return merge([activations, attention], mode='mul')
 
 
-def get_RNN(unit=LSTM, cells=64, bi=False, return_sequences=True, dropout_U=0., consume_less='cpu', l2_reg=0):
-    rnn = unit(cells, return_sequences=return_sequences, consume_less=consume_less, dropout_U=dropout_U,
+def get_RNN(unit=LSTM, cells=64, bi=False, return_sequences=True, dropout_U=0.,
+            consume_less='cpu', l2_reg=0):
+    rnn = unit(cells, return_sequences=return_sequences,
+               consume_less=consume_less, dropout_U=dropout_U,
                W_regularizer=l2(l2_reg))
     if bi:
         return Bidirectional(rnn)
@@ -66,7 +70,8 @@ def get_RNN(unit=LSTM, cells=64, bi=False, return_sequences=True, dropout_U=0., 
         return rnn
 
 
-def build_attention_RNN(embeddings, classes, max_length, unit=LSTM, cells=64, layers=1, **kwargs):
+def build_attention_RNN(embeddings, classes, max_length, unit=LSTM, cells=64,
+                        layers=1, **kwargs):
     # parameters
     bi = kwargs.get("bidirectional", False)
     noise = kwargs.get("noise", 0.)
@@ -83,7 +88,8 @@ def build_attention_RNN(embeddings, classes, max_length, unit=LSTM, cells=64, la
 
     model = Sequential()
     model.add(embeddings_layer(max_length=max_length, embeddings=embeddings,
-                               trainable=False, masking=True, scale=False, normalize=False))
+                               trainable=False, masking=True, scale=False,
+                               normalize=False))
 
     if noise > 0:
         model.add(GaussianNoise(noise))
@@ -91,8 +97,9 @@ def build_attention_RNN(embeddings, classes, max_length, unit=LSTM, cells=64, la
         model.add(Dropout(dropout_words))
 
     for i in range(layers):
-        model.add(get_RNN(unit, cells, bi,
-                          return_sequences=(layers > 1 and i < layers - 1) or attention, dropout_U=dropout_rnn_U))
+        rs = (layers > 1 and i < layers - 1) or attention
+        model.add(get_RNN(unit, cells, bi, return_sequences=rs,
+                          dropout_U=dropout_rnn_U))
         if dropout_rnn > 0:
             model.add(Dropout(dropout_rnn))
 
@@ -114,7 +121,8 @@ def build_attention_RNN(embeddings, classes, max_length, unit=LSTM, cells=64, la
     model.add(Dense(classes, activity_regularizer=l2(loss_l2)))
     model.add(Activation('softmax'))
 
-    model.compile(optimizer=Adam(clipnorm=clipnorm, lr=lr), loss='categorical_crossentropy')
+    model.compile(optimizer=Adam(clipnorm=clipnorm, lr=lr),
+                  loss='categorical_crossentropy')
     return model
 
 
@@ -142,17 +150,22 @@ def target_RNN(wv, tweet_max_length, aspect_max_length, classes=2, **kwargs):
 
     attention = kwargs.get("attention", "simple")
     #####################################################
-    shared_RNN = get_RNN(rnn_type, rnn_size, bi=bi, return_sequences=True, dropout_U=drop_text_rnn_U)
+    shared_RNN = get_RNN(rnn_type, rnn_size, bi=bi, return_sequences=True,
+                         dropout_U=drop_text_rnn_U)
 
     input_tweet = Input(shape=[tweet_max_length], dtype='int32')
     input_aspect = Input(shape=[aspect_max_length], dtype='int32')
 
     # Embeddings
-    tweets_emb = embeddings_layer(max_length=tweet_max_length, embeddings=wv, trainable=trainable, masking=True)(input_tweet)
+    tweets_emb = embeddings_layer(max_length=tweet_max_length, embeddings=wv,
+                                  trainable=trainable, masking=True)(
+        input_tweet)
     tweets_emb = GaussianNoise(noise)(tweets_emb)
     tweets_emb = Dropout(drop_text_input)(tweets_emb)
 
-    aspects_emb = embeddings_layer(max_length=aspect_max_length, embeddings=wv, trainable=trainable, masking=True)(input_aspect)
+    aspects_emb = embeddings_layer(max_length=aspect_max_length, embeddings=wv,
+                                   trainable=trainable, masking=True)(
+        input_aspect)
     aspects_emb = GaussianNoise(noise)(aspects_emb)
 
     # Recurrent NN
@@ -176,7 +189,8 @@ def target_RNN(wv, tweet_max_length, aspect_max_length, classes=2, **kwargs):
         if final_type == "maxout":
             representation = MaxoutDense(final_size)(representation)
         else:
-            representation = Dense(final_size, activation=final_type)(representation)
+            representation = Dense(final_size, activation=final_type)(
+                representation)
         representation = Dropout(drop_final)(representation)
 
     ######################################################
@@ -187,13 +201,16 @@ def target_RNN(wv, tweet_max_length, aspect_max_length, classes=2, **kwargs):
                           activity_regularizer=l2(activity_l2))(representation)
 
     model = Model(input=[input_aspect, input_tweet], output=probabilities)
-    model.compile(optimizer=Adam(clipnorm=clipnorm, lr=lr), loss="binary_crossentropy" if classes == 2 else "categorical_crossentropy")
+
+    loss = "binary_crossentropy" if classes == 2 else "categorical_crossentropy"
+    model.compile(optimizer=Adam(clipnorm=clipnorm, lr=lr), loss=loss)
     return model
 
 
-def cnn(wv, sent_length, **params):
+def cnn_simple(wv, sent_length, **params):
     model = Sequential()
-    model.add(embeddings_layer(max_length=sent_length, embeddings=wv, masking=False))
+    model.add(
+        embeddings_layer(max_length=sent_length, embeddings=wv, masking=False))
 
     model.add(Convolution1D(nb_filter=80, filter_length=4,
                             border_mode='valid', activation='relu'))
@@ -210,11 +227,13 @@ def cnn_multi_filters(wv, sent_length, nfilters, nb_filters, **kwargs):
     noise = kwargs.get("noise", 0)
     trainable = kwargs.get("trainable", False)
     drop_text_input = kwargs.get("drop_text_input", 0.)
+    drop_conv = kwargs.get("drop_conv", 0.)
     activity_l2 = kwargs.get("activity_l2", 0.)
 
     input_text = Input(shape=(sent_length,), dtype='int32')
 
-    emb_text = embeddings_layer(max_length=sent_length, embeddings=wv, trainable=trainable, masking=False)(input_text)
+    emb_text = embeddings_layer(max_length=sent_length, embeddings=wv,
+                                trainable=trainable, masking=False)(input_text)
     emb_text = GaussianNoise(noise)(emb_text)
     emb_text = Dropout(drop_text_input)(emb_text)
 
@@ -225,12 +244,17 @@ def cnn_multi_filters(wv, sent_length, nfilters, nb_filters, **kwargs):
                                   border_mode="valid",
                                   activation="relu",
                                   subsample_length=1)(emb_text)
-        pool_vecs = GlobalMaxPooling1D()(feat_maps)
+        pool_vecs = MaxPooling1D(pool_length=2)(feat_maps)
+        pool_vecs = Flatten()(pool_vecs)
+        # pool_vecs = GlobalMaxPooling1D()(feat_maps)
         pooling_reps.append(pool_vecs)
 
     representation = merge(pooling_reps, mode='concat')
 
-    probabilities = Dense(3, activation='softmax', activity_regularizer=l2(activity_l2))(representation)
+    representation = Dropout(drop_conv)(representation)
+
+    probabilities = Dense(3, activation='softmax',
+                          activity_regularizer=l2(activity_l2))(representation)
 
     model = Model(input=input_text, output=probabilities)
     model.compile(optimizer="adam", loss='categorical_crossentropy')

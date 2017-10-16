@@ -6,7 +6,8 @@ import random
 from ekphrasis.classes.textpp import TextPreProcessor
 from ekphrasis.classes.tokenizer import SocialTokenizer
 from ekphrasis.dicts.emoticons import emoticons
-from kutilities.helpers.data_preparation import print_dataset_statistics, labels_to_categories, categories_to_onehot
+from kutilities.helpers.data_preparation import print_dataset_statistics, \
+    labels_to_categories, categories_to_onehot
 from sklearn.cross_validation import train_test_split
 
 from dataset.data_loader import SemEvalDataLoader
@@ -53,9 +54,10 @@ def get_embeddings(corpus, dim):
     # +1 for zero padding token and +1 for unk
     emb_matrix = numpy.ndarray((vocab_size + 2, dim), dtype='float32')
     for i, (word, vector) in enumerate(vectors.items()):
-        pos = i + 1
-        wv_map[word] = pos
-        emb_matrix[pos] = vector
+        if len(vector) > 199:
+            pos = i + 1
+            wv_map[word] = pos
+            emb_matrix[pos] = vector
 
     # add unknown token
     pos += 1
@@ -91,7 +93,8 @@ def data_splits(dataset, final=False):
         train_ratio = 0.8
         val_test_ratio = 0.5
         train_split_index = int(len(dataset) * train_ratio)
-        val_test_split_index = int((len(dataset) - train_split_index) * val_test_ratio)
+        val_test_split_index = int(
+            (len(dataset) - train_split_index) * val_test_ratio)
 
         training = dataset[:train_split_index]
         rest = dataset[train_split_index:]
@@ -106,7 +109,8 @@ class Task4Loader:
     Task 4: Sentiment Analysis in Twitter
     """
 
-    def __init__(self, word_indices, text_lengths, subtask="A", silver=False, **kwargs):
+    def __init__(self, word_indices, text_lengths, subtask="A", silver=False,
+                 **kwargs):
 
         self.word_indices = word_indices
 
@@ -115,8 +119,10 @@ class Task4Loader:
 
         self.pipeline = Pipeline([
             ('preprocess', CustomPreProcessor(TextPreProcessor(
-                backoff=['url', 'email', 'percent', 'money', 'phone', 'user', 'time', 'url', 'date', 'number'],
-                include_tags={"hashtag", "allcaps", "elongated", "repeated", 'emphasis', 'censored'},
+                backoff=['url', 'email', 'percent', 'money', 'phone', 'user',
+                         'time', 'url', 'date', 'number'],
+                include_tags={"hashtag", "allcaps", "elongated", "repeated",
+                              'emphasis', 'censored'},
                 fix_html=True,
                 segmenter="twitter",
                 corrector="twitter",
@@ -127,12 +133,16 @@ class Task4Loader:
                 dicts=[emoticons]))),
             ('ext', EmbeddingsExtractor(word_indices=word_indices,
                                         max_lengths=text_lengths,
-                                        add_tokens=(False, True) if subtask != "A" else True,
+                                        add_tokens=(False,
+                                                    True) if subtask != "A" else True,
                                         unk_policy="random"))])
 
         # loading data
         print("Loading data...")
-        dataset = SemEvalDataLoader(verbose=False).get_data(task=subtask, years=None, datasets=None, only_semeval=True)
+        dataset = SemEvalDataLoader(verbose=False).get_data(task=subtask,
+                                                            years=None,
+                                                            datasets=None,
+                                                            only_semeval=True)
         random.Random(42).shuffle(dataset)
 
         if filter_classes:
@@ -154,16 +164,22 @@ class Task4Loader:
             print("total observations:", len(self.silver_y))
 
     def load_train_val_test(self, only_test=False):
-        X_train, X_rest, y_train, y_rest = train_test_split(self.X, self.y, test_size=0.3, stratify=self.y,
+        X_train, X_rest, y_train, y_rest = train_test_split(self.X, self.y,
+                                                            test_size=0.3,
+                                                            stratify=self.y,
                                                             random_state=42)
-        X_val, X_test, y_val, y_test = train_test_split(X_rest, y_rest, test_size=0.5, stratify=y_rest,
+        X_val, X_test, y_val, y_test = train_test_split(X_rest, y_rest,
+                                                        test_size=0.5,
+                                                        stratify=y_rest,
                                                         random_state=42)
 
         if not only_test:
             print("\nPreparing training set...")
-            training = prepare_dataset(X_train, y_train, self.pipeline, self.y_one_hot)
+            training = prepare_dataset(X_train, y_train, self.pipeline,
+                                       self.y_one_hot)
             print("\nPreparing validation set...")
-            validation = prepare_dataset(X_val, y_val, self.pipeline, self.y_one_hot)
+            validation = prepare_dataset(X_val, y_val, self.pipeline,
+                                         self.y_one_hot)
         print("\nPreparing test set...")
         testing = prepare_dataset(X_test, y_test, self.pipeline, self.y_one_hot)
 
@@ -173,10 +189,13 @@ class Task4Loader:
             return training, validation, testing
 
     def load_final(self):
-        X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=0.1, stratify=self.y,
+        X_train, X_test, y_train, y_test = train_test_split(self.X, self.y,
+                                                            test_size=0.1,
+                                                            stratify=self.y,
                                                             random_state=27)
         print("\nPreparing training set...")
-        training = prepare_dataset(X_train, y_train, self.pipeline, self.y_one_hot)
+        training = prepare_dataset(X_train, y_train, self.pipeline,
+                                   self.y_one_hot)
         print("\nPreparing test set...")
         testing = prepare_dataset(X_test, y_test, self.pipeline, self.y_one_hot)
         return training, testing

@@ -14,8 +14,8 @@ class DBOWFeatureExtractor(BaseEstimator, TransformerMixin):
     def __init__(self, aggregation,
                  word_vectors=None,
                  word_indices=None,
-                 negation=True, context_diff=None,
-                 neg_comma=True, neg_modals=True,
+                 negation=False, context_diff=None,
+                 neg_comma=False, neg_modals=False,
                  idf_weight=False, fs_weight=False,
                  stopwords=True,
                  window=1):
