@@ -2,7 +2,7 @@ import pickle
 
 import numpy
 from keras.callbacks import ModelCheckpoint
-from keras.utils.visualize_util import plot
+from keras.utils.vis_utils import plot_model
 from kutilities.callbacks import MetricsCallback, WeightsCallback, \
     PlottingCallback
 from kutilities.helpers.data_preparation import get_labels_to_categories_map, \
@@ -99,8 +99,8 @@ nn_model = cnn_multi_filters(embeddings, max_length, [3, 4, 5], 100,
                              # drop_text_input=0.2,
                              drop_conv=0.5, )
 
-plot(nn_model, show_layer_names=True, show_shapes=True,
-     to_file="model_task4_sub{}.png".format(TASK))
+plot_model(nn_model, show_layer_names=True, show_shapes=True,
+           to_file="model_task4_sub{}.png".format(TASK))
 print(nn_model.summary())
 
 ############################################################################
