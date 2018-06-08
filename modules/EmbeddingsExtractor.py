@@ -65,8 +65,8 @@ class EmbeddingsExtractor(BaseEstimator, TransformerMixin):
                 elif self.unk_policy == "zero":
                     sent_words.append(0)
 
-        if all(v == self.word_indices["<unk>"] for v in sent_words) or len(sent_words) < 1:
-            print("ALL <unk>", sent)
+        # if all(v == self.word_indices["<unk>"] for v in sent_words) or len(sent_words) < 1:
+        #     print("ALL <unk>", sent)
         if add_tokens:
             sent_words.append(self.word_indices.get("</s>", 0))
         return sent_words

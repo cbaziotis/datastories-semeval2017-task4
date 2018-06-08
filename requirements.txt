@@ -1,9 +1,9 @@
-keras_utilities==0.4.4
-ekphrasis==0.4.9
-nltk==3.2.4
-numpy==1.13.1
 cachetools==2.0.1
-Keras==2.2.0
+scipy==1.0.0
+numpy==1.13.1
+nltk==3.2.4
 tqdm==4.19.4
+ekphrasis==0.4.9
+Keras==2.2.0
+keras_utilities==0.5.0
 frozendict==1.2
-scikit_learn==0.19.1

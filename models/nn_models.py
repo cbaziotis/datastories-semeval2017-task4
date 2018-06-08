@@ -8,7 +8,7 @@ from keras.layers import Dropout, Dense, Bidirectional, LSTM, \
 from keras.models import Sequential
 from keras.optimizers import Adam
 from keras.regularizers import l2
-from kutilities.layekerasrs import AttentionWithContext, Attention, MeanOverTime
+from kutilities.layers import AttentionWithContext, Attention, MeanOverTime
 from sklearn import preprocessing
 
 
