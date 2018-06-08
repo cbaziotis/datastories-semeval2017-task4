@@ -3,7 +3,7 @@ Created by Christos Baziotis.
 """
 import random
 
-from ekphrasis.classes.textpp import TextPreProcessor
+from ekphrasis.classes.preprocessor import TextPreProcessor
 from ekphrasis.classes.tokenizer import SocialTokenizer
 from ekphrasis.dicts.emoticons import emoticons
 from kutilities.helpers.data_preparation import print_dataset_statistics, \
@@ -11,14 +11,11 @@ from kutilities.helpers.data_preparation import print_dataset_statistics, \
 from sklearn.cross_validation import train_test_split
 
 from dataset.data_loader import SemEvalDataLoader
-from sk_transformers.CustomPreProcessor import CustomPreProcessor
-from sk_transformers.EmbeddingsExtractor import EmbeddingsExtractor
-from utilities.ignore_warnings import set_ignores
-
-set_ignores()
 from sklearn.pipeline import Pipeline
 import numpy
 from embeddings.WordVectorsManager import WordVectorsManager
+from modules.CustomPreProcessor import CustomPreProcessor
+from modules.EmbeddingsExtractor import EmbeddingsExtractor
 
 
 def prepare_dataset(X, y, pipeline, y_one_hot=True, y_as_is=False):
@@ -181,7 +178,8 @@ class Task4Loader:
             validation = prepare_dataset(X_val, y_val, self.pipeline,
                                          self.y_one_hot)
         print("\nPreparing test set...")
-        testing = prepare_dataset(X_test, y_test, self.pipeline, self.y_one_hot)
+        testing = prepare_dataset(X_test, y_test, self.pipeline,
+                                  self.y_one_hot)
 
         if only_test:
             return testing
@@ -197,5 +195,6 @@ class Task4Loader:
         training = prepare_dataset(X_train, y_train, self.pipeline,
                                    self.y_one_hot)
         print("\nPreparing test set...")
-        testing = prepare_dataset(X_test, y_test, self.pipeline, self.y_one_hot)
+        testing = prepare_dataset(X_test, y_test, self.pipeline,
+                                  self.y_one_hot)
         return training, testing

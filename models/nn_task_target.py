@@ -10,7 +10,7 @@ from sklearn.metrics import precision_score, accuracy_score, mean_absolute_error
 from sklearn.metrics import recall_score
 
 from dataset.data_loader import SemEvalDataLoader
-from models.neural.keras_models import target_RNN
+from models.nn_models import target_RNN
 from utilities.data_loader import get_embeddings, Task4Loader, prepare_dataset
 from utilities.ignore_warnings import set_ignores
 
