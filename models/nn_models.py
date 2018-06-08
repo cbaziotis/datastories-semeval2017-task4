@@ -1,20 +1,15 @@
 from keras.constraints import maxnorm
 from keras.engine import Input
 from keras.engine import Model
-from keras.engine import merge
 from keras.layers import Dropout, Dense, Bidirectional, LSTM, \
     Embedding, GaussianNoise, Activation, Flatten, \
-    TimeDistributed, RepeatVector, Permute, MaxoutDense, GlobalMaxPooling1D, \
-    Convolution1D, MaxPooling1D
+    RepeatVector, MaxoutDense, GlobalMaxPooling1D, \
+    Convolution1D, MaxPooling1D, concatenate, Conv1D
 from keras.models import Sequential
 from keras.optimizers import Adam
 from keras.regularizers import l2
-from kutilities.layers import AttentionWithContext, Attention, MeanOverTime
+from kutilities.layekerasrs import AttentionWithContext, Attention, MeanOverTime
 from sklearn import preprocessing
-
-from utilities.ignore_warnings import set_ignores
-
-set_ignores()
 
 
 def embeddings_layer(max_length, embeddings, trainable=False, masking=False,
@@ -39,24 +34,6 @@ def embeddings_layer(max_length, embeddings, trainable=False, masking=False,
     )
 
     return _embedding
-
-
-def weighted_states(activations, rnn_size, input_length, attention="single"):
-    if attention == "all":
-        attention = Flatten()(activations)
-        attention = Dense(input_length, activation='tanh')(attention)
-        attention = Activation('softmax')(attention)
-        attention = RepeatVector(rnn_size)(attention)
-        attention = Permute([2, 1])(attention)
-        return merge([activations, attention], mode='mul')
-    elif attention == "single":
-        attention = TimeDistributed(Dense(1, activation='tanh'))(activations)
-        # attention = Dense(1, activation='tanh')(activations)
-        attention = Flatten()(attention)
-        attention = Activation('softmax')(attention)
-        attention = RepeatVector(rnn_size)(attention)
-        attention = Permute([2, 1])(attention)
-        return merge([activations, attention], mode='mul')
 
 
 def get_RNN(unit=LSTM, cells=64, bi=False, return_sequences=True, dropout_U=0.,
@@ -178,7 +155,7 @@ def target_RNN(wv, tweet_max_length, aspect_max_length, classes=2, **kwargs):
     h_aspects = RepeatVector(tweet_max_length)(h_aspects)
 
     # Merge of Aspect + Tweet
-    representation = merge([h_tweets, h_aspects], mode='concat')
+    representation = concatenate([h_tweets, h_aspects])
 
     # apply attention over the hidden outputs of the RNN's
     att_layer = AttentionWithContext if attention == "context" else Attention
@@ -212,8 +189,8 @@ def cnn_simple(wv, sent_length, **params):
     model.add(
         embeddings_layer(max_length=sent_length, embeddings=wv, masking=False))
 
-    model.add(Convolution1D(nb_filter=80, filter_length=4,
-                            border_mode='valid', activation='relu'))
+    model.add(Conv1D(activation="relu",
+                     filters=80, kernel_size=4, padding="valid"))
     # we use max pooling:
     model.add(GlobalMaxPooling1D())
 
@@ -249,7 +226,7 @@ def cnn_multi_filters(wv, sent_length, nfilters, nb_filters, **kwargs):
         # pool_vecs = GlobalMaxPooling1D()(feat_maps)
         pooling_reps.append(pool_vecs)
 
-    representation = merge(pooling_reps, mode='concat')
+    representation = concatenate(pooling_reps)
 
     representation = Dropout(drop_conv)(representation)
 
